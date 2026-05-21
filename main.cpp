@@ -8,7 +8,7 @@ using namespace std;
 
 class Microorganisms {
     string name;
-    long int size;
+    long int size; // в нанометрах
     static long int min_size;
 public:
     Microorganisms(string name = "Unknown", long int size = 0) {
@@ -25,6 +25,10 @@ public:
     virtual void get_info() {
         cout << "Name: " << name << endl;
         cout << "Size: " << size << endl;
+    }
+
+    virtual string get_cell_wall_composition() {
+        return "Unknown";
     }
 };
 
@@ -46,6 +50,8 @@ public:
         Microorganisms::get_info();
         cout << "Is dangerous: " << is_dangerous << endl;
     }
+
+    string get_cell_wall_composition() {return Microorganisms::get_cell_wall_composition();}
 };  
 
 class Prokaryotes:public Microorganisms {
@@ -59,6 +65,8 @@ public:
         Microorganisms::get_info();
         cout << "Metabolism: " << metabolism << endl;
     }
+
+    string get_cell_wall_composition() {return Microorganisms::get_cell_wall_composition();}
 };
 
 class Eukaryotes:public Microorganisms {
@@ -72,6 +80,8 @@ public:
         Microorganisms::get_info();
         cout << "Reproduction: " << reproduction << endl;
     }
+
+    string get_cell_wall_composition() {return Microorganisms::get_cell_wall_composition();}
 };
 
 // ! ||--------------------------------------------------------------------------------||
@@ -88,6 +98,10 @@ public:
         Prokaryotes::get_info();
         cout << "Gram stain: " << gram_stain << endl;
     }
+
+    string get_cell_wall_composition() {
+        return "Peptidoglycan";
+    }
 };
 
 class Archaea:public Prokaryotes {
@@ -100,6 +114,10 @@ public:
     void get_info() {
         Prokaryotes::get_info();
         cout << "Membrane structure: " << membrane_structure << endl;
+    }
+
+    string get_cell_wall_composition() {
+        return "Pseudopeptidoglycan";
     }
 };
 
@@ -115,6 +133,8 @@ public:
         Eukaryotes::get_info();
         cout << "Is multicellular: " << is_multicellular << endl;
     }
+    
+    string get_cell_wall_composition() {return Microorganisms::get_cell_wall_composition();}
 };
 
 class Plants: public Eukaryotes {
@@ -128,6 +148,10 @@ public:
         Eukaryotes::get_info();
         cout << "Is higher realms: " << is_higher_realms << endl;
     }
+    
+    string get_cell_wall_composition() {
+        return "Cellulose";
+    }
 };
 
 class Mushrooms: public Eukaryotes {
@@ -140,6 +164,10 @@ public:
     void get_info() {
         Eukaryotes::get_info();
         cout << "Is multicellular: " << is_multicellular << endl;
+    }
+
+    string get_cell_wall_composition() {
+        return "Chitin";
     }
 };
 
@@ -197,16 +225,28 @@ int main(){
 
     Viruses* virus = new Viruses("Virus", 100);
     Viruses* virus2 = new Viruses("Jolin", 1, 1);
+
     cout << virus->get_name() << endl;
     cout << virus->get_size() << endl;
     cout << virus2->get_min_size() << endl;
     cout << endl;
+
     virus->get_info();
+    cout << virus->get_cell_wall_composition() << endl;
     cout << endl;
+
     virus2->get_info();
     cout << endl;
+
     Animals* lion = new Animals("Lion", 250000000000, 1, 1);
     lion->get_info();
+    cout << lion->get_cell_wall_composition() << endl;
+    cout << endl;
+
+    Plants* mimoze = new Plants("Mimoze", 100000000000, 1, 1);
+    mimoze->get_info();
+    cout << mimoze->get_cell_wall_composition() << endl;
+
     
     return 0;
 }
