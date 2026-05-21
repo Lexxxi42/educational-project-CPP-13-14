@@ -14,10 +14,12 @@ public:
     Microorganisms(string name = "Unknown", long int size = 0) {
         if (size < min_size)
             min_size = size;
-        this->name = name;
-        this->size = size;
+        if (name != "") this->name = name;
+        else this->name = "Unknown";
+        if (size > 0) this->size = size;
+        else this->size = 0;
     }
-
+    ~Microorganisms() {}
     int get_size() {return size;}
     static int get_min_size() {return min_size;}
     string get_name() {return name;}
@@ -41,9 +43,9 @@ long int Microorganisms::min_size = 5;
 class Viruses:public Microorganisms {
     int is_dangerous;
 public:
-    Viruses(string name, long int size, int is_dangerous = 1):Microorganisms(name,size){
-        if (is_dangerous < 0 && is_dangerous > 1) this->is_dangerous = 1;
-        else this->is_dangerous = is_dangerous;
+    Viruses(string name = "Unknown", long int size = 0, int is_dangerous = 1):Microorganisms(name,size){
+        if (is_dangerous == 1) this->is_dangerous = is_dangerous;
+        else this->is_dangerous = 0;
     }
 
     void get_info() {
@@ -57,8 +59,9 @@ public:
 class Prokaryotes:public Microorganisms {
     int metabolism;
 public:
-    Prokaryotes(string name, long int size, int metabolism):Microorganisms(name,size){
-        this->metabolism = metabolism;
+    Prokaryotes(string name = "Unknown", long int size = 0, int metabolism = 0):Microorganisms(name,size){
+        if (metabolism == 1) this->metabolism = metabolism;
+        else this->metabolism = 0;
     }
 
     void get_info() {
@@ -72,8 +75,9 @@ public:
 class Eukaryotes:public Microorganisms {
     int reproduction;
 public:
-    Eukaryotes(string name, long int size, int reproduction):Microorganisms(name,size){
-        this->reproduction = reproduction;
+    Eukaryotes(string name = "Unknown", long int size = 0, int reproduction = 0):Microorganisms(name,size){
+        if (reproduction == 1) this->reproduction = reproduction;
+        else this->reproduction = 0;
     }
 
     void get_info() {
@@ -90,8 +94,9 @@ public:
 class Bacteria:public Prokaryotes {
     int gram_stain;
 public:
-    Bacteria(string name, long int size, int metabolism, int gram_stain):Prokaryotes(name,size,metabolism){
-        this->gram_stain = gram_stain;
+    Bacteria(string name = "Unknown", long int size = 0, int metabolism = 0, int gram_stain = 0):Prokaryotes(name,size,metabolism){
+        if (gram_stain == 1) this->gram_stain = gram_stain;
+        else this->gram_stain = 0;
     }
 
     void get_info() {
@@ -107,8 +112,9 @@ public:
 class Archaea:public Prokaryotes {
     int membrane_structure;
 public:
-    Archaea(string name, long int size, int metabolism, int membrane_structure):Prokaryotes(name,size,metabolism){
-        this->membrane_structure = membrane_structure;
+    Archaea(string name = "Unknown", long int size = 0, int metabolism = 0, int membrane_structure = 0):Prokaryotes(name,size,metabolism){
+        if (membrane_structure == 1) this->membrane_structure = membrane_structure;
+        else this->membrane_structure = 0;
     }
 
     void get_info() {
@@ -125,8 +131,9 @@ public:
 class Animals: public Eukaryotes {
     int is_multicellular;
 public:
-    Animals(string name, long int size, int reproduction, int is_multicellular):Eukaryotes(name, size, reproduction) {
-            this->is_multicellular = is_multicellular;
+    Animals(string name = "Unknown", long int size = 0, int reproduction = 0, int is_multicellular = 0):Eukaryotes(name, size, reproduction) {
+        if (is_multicellular == 1) this->is_multicellular = is_multicellular;
+        else this->is_multicellular = 0;
     }
 
     void get_info() {
@@ -140,8 +147,9 @@ public:
 class Plants: public Eukaryotes {
     int is_higher_realms;
 public:
-    Plants(string name, long int size, int reproduction, int is_higher_realms):Eukaryotes(name, size, reproduction) {
-            this->is_higher_realms = is_higher_realms;
+    Plants(string name = "Unknown", long int size = 0, int reproduction = 0, int is_higher_realms = 0):Eukaryotes(name, size, reproduction) {
+        if (is_higher_realms == 1) this->is_higher_realms = is_higher_realms;
+        else this->is_higher_realms = 0;
     }
 
     void get_info() {
@@ -157,8 +165,9 @@ public:
 class Mushrooms: public Eukaryotes {
     int is_multicellular;
 public:
-    Mushrooms(string name, long int size, int reproduction, int is_multicellular):Eukaryotes(name, size, reproduction) {
-            this->is_multicellular = is_multicellular;
+    Mushrooms(string name = "Unknown", long int size = 0, int reproduction = 0, int is_multicellular = 0):Eukaryotes(name, size, reproduction) {
+        if (is_multicellular == 1) this->is_multicellular = is_multicellular;
+        else this->is_multicellular = 0;
     }
 
     void get_info() {
@@ -200,7 +209,13 @@ class List {
     int size;
 public:
     List(): pt_hd(nullptr), size(0) {}
-
+    ~List() {
+        while (pt_hd != nullptr) {
+            Uzel<L>* temp = pt_hd;
+            pt_hd = pt_hd->pt;
+            delete temp;
+        }
+    }
     void print() {
         print(pt_hd);
     }
@@ -290,15 +305,17 @@ int main(){
 
     List<Microorganisms*> organisms;
 
-    Viruses* cov = new Viruses("SARS-CoV-2", 100);
-    Bacteria* coli = new Bacteria("Jolin", 2000, 1, 1);
-    Animals* lion = new Animals("Lion", 250000000000, 1, 1);
-    Plants* mimoze = new Plants("Mimoze", 100000000000, 1, 1);
+    Viruses cov ("SARS-CoV-2", 100);
+    Bacteria coli ("Jolin", 2000, 1, 1);
+    Animals lion ("Lion", 250000000000, 1, 1);
+    Plants mimoze ("Mimoze", 100000000000, 1, 1);
+    Mushrooms empty;
 
-    organisms + cov;
-    organisms + coli;
-    organisms + lion;
-    organisms + mimoze;
+    organisms + &cov;
+    organisms + &coli;
+    organisms + &lion;
+    organisms + &mimoze;
+    organisms + &empty;
 
     organisms.print();
 
