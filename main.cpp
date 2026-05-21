@@ -116,11 +116,12 @@ public:
         pt_hd = new Uzel(val, pt_hd);
     }
 
-    List operator--() {
-        if (pt_hd == nullptr) {
+    void operator--(int) {
+        if (pt_hd != nullptr) {
             Uzel* deleted = pt_hd;
             pt_hd = pt_hd->pt;
             delete deleted;}
+        
     }
 };
 // ! ||--------------------------------------------------------------------------------||
