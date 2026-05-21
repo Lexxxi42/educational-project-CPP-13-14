@@ -8,12 +8,20 @@ using namespace std;
 class Microorganisms {
     string name;
     int size;
+    static int min_size;
 public:
-    Microorganisms(string name, int size) {
+    Microorganisms(string name = "Unknown", int size = 0) {
+        if (size < min_size)
+            min_size = size;
         this->name = name;
         this->size = size;
     }
+    int get_size() {return size;}
+    static int get_min_size() {return min_size;}
+    string get_name() {return name;}
 };
+
+int Microorganisms::min_size = 5;
 // ! ||--------------------------------------------------------------------------------||
 // ! ||                                    подклассы                                   ||
 // ! ||--------------------------------------------------------------------------------||
@@ -123,6 +131,7 @@ public:
             delete deleted;}
         
     }
+
 };
 // ! ||--------------------------------------------------------------------------------||
 // ! ||                               основная программа                               ||
@@ -134,5 +143,11 @@ int main(){
     list.add("Test2");
     list--;
     list.print();
+
+    Viruses* virus = new Viruses("Virus", 100, 1);
+    Viruses* virus2 = new Viruses("Jolin", 1, 1);
+    cout << virus->get_name() << endl;
+    cout << virus->get_size() << endl;
+    cout << virus2->get_min_size() << endl;
     return 0;
 }
