@@ -51,7 +51,7 @@ public:
         cout << "Is dangerous: " << is_dangerous << endl;
     }
 
-    string get_cell_wall_composition() {return Microorganisms::get_cell_wall_composition();}
+    string get_cell_wall_composition() {return "Capsid (not cell wall)";}
 };  
 
 class Prokaryotes:public Microorganisms {
@@ -66,7 +66,7 @@ public:
         cout << "Metabolism: " << metabolism << endl;
     }
 
-    string get_cell_wall_composition() {return Microorganisms::get_cell_wall_composition();}
+    string get_cell_wall_composition() {return "Varies";}
 };
 
 class Eukaryotes:public Microorganisms {
@@ -81,7 +81,7 @@ public:
         cout << "Reproduction: " << reproduction << endl;
     }
 
-    string get_cell_wall_composition() {return Microorganisms::get_cell_wall_composition();}
+    string get_cell_wall_composition() {return "Varies";}
 };
 
 // ! ||--------------------------------------------------------------------------------||
@@ -134,7 +134,7 @@ public:
         cout << "Is multicellular: " << is_multicellular << endl;
     }
     
-    string get_cell_wall_composition() {return Microorganisms::get_cell_wall_composition();}
+    string get_cell_wall_composition() {return "No cell wall";}
 };
 
 class Plants: public Eukaryotes {
@@ -171,81 +171,136 @@ public:
     }
 };
 
+template<typename T>
+void printel(T& el) {
+    cout << "----------------------------------------" << endl;
+    cout << el << endl;
+}
+void printel(Microorganisms* el) {
+    cout << "----------------------------------------" << endl;
+    el->get_info();
+}
+
 // ! ||--------------------------------------------------------------------------------||
 // ! ||                                  классы списка                                 ||
 // ! ||--------------------------------------------------------------------------------||
-
+template<class U>
 class Uzel {
 public:
-    string el;
-    Uzel* pt;
+    U el;
+    Uzel<U>* pt;
 
-    Uzel(const string& element, Uzel* pointer = nullptr):
+    Uzel(const U& element, Uzel<U>* pointer = nullptr):
         el(element), pt(pointer) {}
 };
 
+template<class L>
 class List {
-    Uzel* pt_hd;
+    Uzel<L>* pt_hd;
+    int size;
 public:
-    List(): pt_hd(nullptr) {}
+    List(): pt_hd(nullptr), size(0) {}
 
     void print() {
         print(pt_hd);
     }
 
-    void print(Uzel* pt) {
+    void print(Uzel<L>* pt) {
         if (pt == nullptr) return;
+        printel(pt->el);
         print(pt->pt);
-        cout << pt->el << endl;
     }
 
-    void add(string val) {
-        pt_hd = new Uzel(val, pt_hd);
+    void operator+(const L& val) {
+        Uzel<L>* added = new Uzel<L>(val);
+        
+        if (pt_hd == nullptr) pt_hd = added;
+        else {
+            Uzel<L>* curr = pt_hd;
+            while (curr->pt != nullptr) {
+                curr = curr->pt;
+            }
+            curr->pt = added;
+        }
+        size++;
     }
 
     void operator--(int) {
-        if (pt_hd != nullptr) {
-            Uzel* deleted = pt_hd;
-            pt_hd = pt_hd->pt;
-            delete deleted;}
-        
+        if (pt_hd == nullptr) return;
+        else if (pt_hd->pt == nullptr) {
+            delete pt_hd;
+            pt_hd = nullptr;
+        }
+        else {
+            Uzel<L>* deleted = pt_hd;
+            while (deleted->pt->pt != nullptr) {
+                deleted = deleted->pt;
+            }
+            delete deleted->pt;
+            deleted->pt = nullptr;
+        }    
+        size--;
+    }
+
+    bool operator!=(const List<L>& enemy) const {
+        if (size != enemy.size) return true;
+        Uzel<L>* curr = pt_hd;
+        Uzel<L>* curr_enemy = enemy.pt_hd;
+        while (curr != nullptr && curr_enemy != nullptr) {
+            if(curr->el != curr_enemy->el) return true;
+            curr = curr->pt;
+            curr_enemy = curr_enemy->pt;
+        }
+        return false;
     }
 
 };
+
 // ! ||--------------------------------------------------------------------------------||
 // ! ||                               основная программа                               ||
 // ! ||--------------------------------------------------------------------------------||
 int main(){
-    List list;
-    list.add("Test");
-    list.add("Test1");
-    list.add("Test2");
-    list--;
-    list.print();
+    List<string> list;
+    list + "Test1";
+    list + "Test2";
+    list + "Test3";
 
-    Viruses* virus = new Viruses("Virus", 100);
-    Viruses* virus2 = new Viruses("Jolin", 1, 1);
+    List<string> list1;
+    list1 + "Test1";
+    list1 + "Test2";
 
-    cout << virus->get_name() << endl;
-    cout << virus->get_size() << endl;
-    cout << virus2->get_min_size() << endl;
-    cout << endl;
+    cout << (list!=list1) << endl;
 
-    virus->get_info();
-    cout << virus->get_cell_wall_composition() << endl;
-    cout << endl;
+    List<string> list2;
+    list2 + "Test1";
+    list2 + "Test2";
+    list2 + "Test3";
+    
+    cout << (list!=list2) << endl;
 
-    virus2->get_info();
-    cout << endl;
+    List<char> char_list;
+    char_list + 'A';
+    char_list + 'B';
+    char_list + 'C';
+    char_list + 'D';
+    
+    char_list.print();
+    char_list--;
+    char_list.print();
 
+    List<Microorganisms*> organisms;
+
+    Viruses* cov = new Viruses("SARS-CoV-2", 100);
+    Bacteria* coli = new Bacteria("Jolin", 2000, 1, 1);
     Animals* lion = new Animals("Lion", 250000000000, 1, 1);
-    lion->get_info();
-    cout << lion->get_cell_wall_composition() << endl;
-    cout << endl;
-
     Plants* mimoze = new Plants("Mimoze", 100000000000, 1, 1);
-    mimoze->get_info();
-    cout << mimoze->get_cell_wall_composition() << endl;
+
+    organisms + cov;
+    organisms + coli;
+    organisms + lion;
+    organisms + mimoze;
+
+    organisms.print();
 
     
     return 0;
